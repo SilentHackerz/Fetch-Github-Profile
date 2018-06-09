@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import './App.scss';
 import ReactDOM from 'react-dom';
 
+import Profile from './Profile.js';
+import SearchProfile from './SearchProfile.js';
+
 const API = 'https://api.github.com/users';
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -20,6 +24,13 @@ class App extends React.Component {
 
     this.fetchProfile = this.fetchProfile.bind(this);
   }
+
+  // How data is being passed from child to parent - https://medium.com/@ruthmpardee/passing-data-between-react-components-103ad82ebd17
+  // fetchProfile() is a callback function defined in parent. This takes the data I need as an argument. But the data will come from the child component SearhProfile
+  // So, I pass this callback function to the child-Component SearchProfile as a prop, with the below line
+  // <SearchProfile fetchProfileBoundFunction={this.fetchProfile.bind(this)}/>
+  // Call the callback (fetchProfileBoundFunction) using this.props.[callback] in the child and pass in the data as the argument.
+  // So in SearchProfile I do < this.props.fetchProfileBoundFunction(username) >
   fetchProfile(username) {
     let url = `${API}/${username}`;
     fetch(url)
@@ -52,65 +63,6 @@ class App extends React.Component {
 
       </div>
     )
-  }
-}
-
-
-class SearchProfile extends React.Component {
-  render() {
-    return (
-      <div className="search--box">
-         <form onSubmit={this.handleForm.bind(this)}>
-           <label><input onChange={(e) => this.handleForm(e)} type="search" ref="username" placeholder="Type Username + Enter"/></label>
-         </form>
-      </div>
-    )
-  }
-
-  handleForm(e) {
-   e.preventDefault();
-    let username = e.target.value;
-    this.props.fetchProfileBoundFunction(username);
-    e.target.value = '';
-  }
-}
-
-class Profile extends React.Component {
-  render() {
-    let data = this.props.data;
-    let followers = `${data.homeUrl}/followers`;
-    let repositories = `${data.homeUrl}?tab=repositories`;
-    let following = `${data.homeUrl}/following`;
-    if (data.notFound === 'Not Found')
-      return (
-         <div className="notfound">
-            <h2>Oops !!!</h2>
-            <p>The Component Couldn't Find The You Were Looking For . Try Again </p>
-         </div>
-      );
-      else
-      return (
-        <section className="github--profile">
-          <div className="github--profile__info">
-            <a href={data.homeUrl} target="_blank" title={data.name || data.username}><img src={data.avatar} alt={data.username}/></a>
-            <h2><a href={data.homeUrl} title={data.username} target="_blank">{data.name || data.username}</a></h2>
-            <h3>{data.location || 'I Live In My Mind'}</h3>
-          </div>
-          <div className="github--profile__state">
-            <ul>
-               <li>
-                  <a href={followers} target="_blank" title="Number Of Followers"><i>{data.followers}</i><span>Followers</span></a>
-               </li>
-               <li>
-                  <a href={repositories} target="_blank" title="Number Of Repositoriy"><i>{data.repos}</i><span>Repositoriy</span></a>
-               </li>
-               <li>
-                  <a href={following} target="_blank" title="Number Of Following"><i>{data.following}</i><span>Following</span></a>
-               </li>
-            </ul>
-          </div>
-        </section>
-      );
   }
 }
 
