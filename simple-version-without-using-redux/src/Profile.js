@@ -7,6 +7,8 @@ class Profile extends React.Component {
     let followers = `${data.homeUrl}/followers`;
     let repositories = `${data.homeUrl}?tab=repositories`;
     let following = `${data.homeUrl}/following`;
+    let lastYearContribution = `${data.lastYearContribution}`;
+
     if (data.notFound === 'Not Found')
       return (
          <div className="notfound">
@@ -17,7 +19,7 @@ class Profile extends React.Component {
       else
       return (
         <section className="github--profile">
-          
+
           <div className="github--profile__info">
             <a href={data.homeUrl} target="_blank" title={data.name || data.username}><img src={data.avatar} alt={data.username}/></a>
             <h2><a href={data.homeUrl} style={{color: 'yellow'}} title={data.username} target="_blank">{data.name || data.username}</a></h2>
@@ -30,11 +32,14 @@ class Profile extends React.Component {
                   <a style={{color: 'yellow'}} href={followers} target="_blank" title="Number Of Followers"><i>{data.followers + " "}</i><span>Followers</span></a>
                </li>
                <li>
-                  <a style={{color: 'yellow'}} href={repositories} target="_blank" title="Number Of Repositoriy"><i>{data.repos + " "}</i><span>Repositoriy</span></a>
-               </li>
-               <li>
                   <a style={{color: 'yellow'}} href={following} target="_blank" title="Number Of Following"><i>{data.following + " "}</i><span>Following</span></a>
                </li>
+               <li>
+                  <a style={{color: 'yellow'}} href={repositories} target="_blank" title="Number Of Repositories"><i>{data.repos + " "}</i><span>Repositoriy</span></a>
+               </li>
+               <li>
+               <a style={{color: 'yellow'}} href={lastYearContribution} target="_blank" title="Number Of Last Year Contribution"><i>{data.lastYearContribution + " "}</i><span>Last Year Contribution</span></a>
+            </li>
             </ul>
           </div>
 
@@ -44,3 +49,5 @@ class Profile extends React.Component {
 }
 
 export default Profile;
+
+// checkout some top contributor - fabpot / andrew / taylorotwell

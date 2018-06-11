@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import './App.scss';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 
 import Profile from './Profile.js';
 import SearchProfile from './SearchProfile.js';
 
 const API = 'https://api.github.com/users';
+const APIContribution = 'https://github-contributions-api.now.sh/v1';  // this second API is only for getting the total contributios for the current year.
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      username: 'rohan-paul',
+      username: 'getify',
       name:'',
       avatar:'',
       location:'',
@@ -23,6 +24,7 @@ class App extends React.Component {
     }
 
     this.fetchProfile = this.fetchProfile.bind(this);
+    this.fetchUserContribution = this.fetchUserContribution.bind(this);
   }
 
   // How data is being passed from child to parent - https://medium.com/@ruthmpardee/passing-data-between-react-components-103ad82ebd17
@@ -45,19 +47,49 @@ class App extends React.Component {
           followers: data.followers,
           following: data.following,
           homeUrl: data.html_url,
-          notFound: data.message
+          notFound: data.message,
+          lastYearContribution:''
         })
       })
       .catch((error) => console.log('Oops! . There Is A Problem') )
   }
+
+  /* A> Now another function to fetch total contribution from the user.
+  B> But Github's above api directly does not give the total contributions number. So used the below one
+
+  C> https://github.com/sallar/github-contributions-api
+
+  D> So, the url for "getify" will be - https://github-contributions-api.now.sh/v1/getify
+
+  E> Now to visualize the data in proper json format - Paste the huge data into  - https://jsonformatter.curiousconcept.com/
+
+  F> I can further paste that into a text-editior, and from there, I can see that the whole json file's first property is "year" which is an array of objects (each object being a year. And for the current (lates) year, I need to access the first object (i.e. the first elemtn of the array). Then within that first object, I have to access the value of the "total" property.
+  */
+ fetchUserContribution(username) {
+  let url = `${APIContribution}/${username}`;
+
+  fetch(url)
+    .then((res) => res.json() )
+    .then((data) => {
+      this.setState({
+        lastYearContribution: data.years[0].total
+      })
+    })
+    .catch((error) => console.log('Oops! . There Is A Problem') )
+}
+
   componentDidMount() {
     this.fetchProfile(this.state.username);
+    this.fetchUserContribution(this.state.username);
   }
   render() {
     return (
       <div>
          <section id="card">
-           <SearchProfile fetchProfileBoundFunction={this.fetchProfile.bind(this)}/>
+           <SearchProfile
+           fetchProfileBoundFunction={this.fetchProfile.bind(this)}
+           fetchProfileContributionBoundFunction={this.fetchUserContribution.bind(this)}
+           />
            <Profile data={this.state} />
          </section>
 

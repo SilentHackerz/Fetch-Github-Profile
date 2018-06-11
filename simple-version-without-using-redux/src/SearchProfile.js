@@ -16,7 +16,8 @@ class SearchProfile extends React.Component {
   handleForm(e) {
    e.preventDefault();
     let username = e.target.value;
-    this.props.fetchProfileBoundFunction(username);    
+    this.props.fetchProfileBoundFunction(username);
+    this.props.fetchProfileContributionBoundFunction(username);
   }
 }
 
